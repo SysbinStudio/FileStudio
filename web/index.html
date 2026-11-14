@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文件管家 · FileStudio</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div id="bg"></div>
+
+<div id="app">
+  <header>
+    <div class="bar">
+      <div class="brand"><span class="mark">◆</span><div><strong>文件管家</strong><small>FileStudio · 浏览器文件工作台</small></div></div>
+      <button id="btn-root" class="primary">选择存储空间</button>
+      <button id="btn-up">上级</button>
+      <button id="btn-refresh">刷新</button>
+      <div id="path" class="path" title="当前目录"></div>
+      <button id="btn-explorer">资源管理器</button>
+      <button id="btn-settings">外观设置</button>
+      <button id="btn-auth" class="auth-badge">游客预览 · 登录</button>
+    </div>
+    <div class="bar">
+      <button id="btn-newfile">新建文件</button>
+      <button id="btn-newfolder">新建文件夹</button>
+      <button id="btn-upload">上传文件</button>
+      <input type="file" id="file-input" multiple hidden>
+      <button id="btn-rename">重命名</button>
+      <button id="btn-delete" class="danger">删除</button>
+      <span class="flex"></span>
+      <input id="search" class="search" placeholder="搜索文件名（递归搜索整个存储空间）">
+      <button id="btn-search">搜索</button>
+      <button id="btn-clear">清除</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel tree-panel">
+      <div class="panel-head"><span>目录树</span><span id="tree-hint" class="muted"></span></div>
+      <div id="tree" class="scroll"></div>
+    </section>
+
+    <section class="panel list-panel">
+      <div class="panel-head"><span id="list-title">文件列表</span><span id="list-count" class="muted"></span></div>
+      <div class="table-wrap scroll">
+        <table>
+          <thead><tr>
+            <th data-sort="name">名称</th>
+            <th data-sort="short_label">类型</th>
+            <th data-sort="size">大小</th>
+            <th data-sort="mtime">修改时间</th>
+          </tr></thead>
+          <tbody id="file-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel view-panel">
+      <div class="panel-head"><span id="view-title">预览 / 编辑</span><span id="view-sub" class="muted"></span></div>
+      <div id="view-tools" class="tools"></div>
+      <div id="view-body">
+        <div id="welcome" class="view">
+          <div class="welcome-card">
+            <h2>文件管家 · FileStudio</h2>
+            <p class="lead">一个跑在浏览器里的本地文件工作台</p>
+            <div class="welcome-grid">
+              <div><b>选择存储空间</b><span>指定一个目录作为工作区，所有操作都被限制在其中</span></div>
+              <div><b>识别与编辑</b><span>TXT / MD / 代码 / JSON / CSV / XML 等可直接编辑保存</span></div>
+              <div><b>图片查看</b><span>JPG / PNG / GIF / WEBP / TIFF / ICO，缩放旋转翻页</span></div>
+              <div><b>只读预览</b><span>Word / Excel / PPT / PDF / 压缩包 / 二进制十六进制</span></div>
+              <div><b>自定义背景</b><span>配色主题、背景图片、显示方式与淡化程度</span></div>
+              <div><b>登录 / 游客预览</b><span>管理员可完整读写，游客免登录只读预览，服务监听 0.0.0.0:1111</span></div>
+            </div>
+            <p class="hint">单击文件查看 / 编辑 · 双击目录进入 · 双击文件用系统默认程序打开</p>
+          </div>
+        </div>
+
+        <div id="editor-view" class="view hidden">
+          <div class="editor-wrap"><pre id="gutter"></pre><textarea id="editor" spellcheck="false" wrap="off"></textarea></div>
+        </div>
+
+        <div id="image-view" class="view hidden">
+          <div id="image-stage"><img id="image" alt="图片预览" draggable="false"></div>
+        </div>
+
+        <div id="pdf-view" class="view hidden">
+          <iframe id="pdf-frame" title="PDF 阅读器"></iframe>
+          <pre id="pdf-text" class="hidden"></pre>
+        </div>
+
+        <div id="readonly-view" class="view hidden"><pre id="readonly"></pre></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><span id="status">就绪</span><span id="status-right"></span></footer>
+</div>
+
+<div id="modal-mask" class="hidden">
+  <div id="modal">
+    <div class="modal-head"><h3 id="modal-title"></h3><button id="modal-x">×</button></div>
+    <div id="modal-body"></div>
+    <div id="modal-foot"></div>
+  </div>
+</div>
+
+<div id="login" class="hidden">
+  <div class="login-card">
+    <div class="login-logo">◆</div>
+    <h2>文件管家 · FileStudio</h2>
+    <p>登录后可使用完整的编辑与管理功能</p>
+    <input id="login-user" type="text" placeholder="管理员账号" value="admin" autocomplete="username" spellcheck="false">
+    <input id="login-pass" type="password" placeholder="管理员密码" autocomplete="current-password">
+    <button id="login-ok" class="primary">管理员登录</button>
+    <div class="login-or"><span>或</span></div>
+    <button id="login-guest">以游客身份预览（只读）</button>
+    <p id="login-msg" class="hint"></p>
+    <p class="hint login-note">游客无需密码，可浏览目录、查看图片 / 文档 / PDF / 压缩包；<br>不能编辑、上传、删除、切换存储空间或更改设置。</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>
