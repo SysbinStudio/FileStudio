@@ -94,3 +94,5 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 ## Notes
 
 This is a local-first tool intended for convenience, internal file management, and quick preview tasks. It is best suited for trusted environments and controlled local or LAN access.
+
+
